@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم صدور فاکتور - عسل سل</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- صفحه ایجاد فاکتور -->
+    <div class="container" id="formPage">
+        <header class="header">
+            <div class="logo">
+                <img src="https://digifycdn.com/media/item_images/Picsart_25-08-03_01-30-38-023.jpg?x-img=v1/optimize,q_95/resize,h_100,force_true" alt="لوگو عسل سل" class="logo-image">
+                <div class="logo-text">
+                    <h1>عسل سل</h1>
+                    <p class="website">asalsell.ir</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <h2 class="page-title">صدور فاکتور فروش</h2>
+            
+            <!-- فرم اطلاعات مشتری -->
+            <section class="form-section">
+                <h3 class="section-title">اطلاعات مشتری</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="customerName">نام و نام خانوادگی *</label>
+                        <input type="text" id="customerName" placeholder="نام کامل مشتری" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">شماره تماس *</label>
+                        <input type="tel" id="customerPhone" placeholder="09123456789" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="customerAddress">آدرس کامل *</label>
+                        <textarea id="customerAddress" rows="3" placeholder="آدرس دقیق برای ارسال محصول" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerCity">شهر</label>
+                        <input type="text" id="customerCity" placeholder="نام شهر">
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPostalCode">کد پستی</label>
+                        <input type="text" id="customerPostalCode" placeholder="کد پستی 10 رقمی">
+                    </div>
+                </div>
+            </section>
+
+            <!-- انتخاب محصولات -->
+            <section class="form-section">
+                <h3 class="section-title">انتخاب محصولات</h3>
+                <div class="products-container" id="productsContainer">
+                    <!-- محصولات به صورت داینامیک اضافه می‌شوند -->
+                </div>
+                <button type="button" class="btn-add-product" onclick="addProductRow()">
+                    <span>+</span> افزودن محصول
+                </button>
+            </section>
+
+            <!-- جزئیات اضافی -->
+            <section class="form-section">
+                <h3 class="section-title">جزئیات اضافی</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="discountPercent">تخفیف (درصد)</label>
+                        <input type="number" id="discountPercent" min="0" max="100" value="0" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="shippingCost">هزینه ارسال (تومان)</label>
+                        <input type="number" id="shippingCost" min="0" value="0" placeholder="0">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="notes">یادداشت</label>
+                        <textarea id="notes" rows="2" placeholder="توضیحات اضافی (اختیاری)"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- خلاصه مالی -->
+            <section class="summary-section">
+                <div class="summary-row">
+                    <span>جمع کل:</span>
+                    <span class="amount" id="subtotalAmount">0 تومان</span>
+                </div>
+                <div class="summary-row">
+                    <span>تخفیف:</span>
+                    <span class="amount discount" id="discountAmount">0 تومان</span>
+                </div>
+                <div class="summary-row">
+                    <span>هزینه ارسال:</span>
+                    <span class="amount" id="shippingAmount">0 تومان</span>
+                </div>
+                <div class="summary-row total">
+                    <span>مبلغ قابل پرداخت:</span>
+                    <span class="amount" id="totalAmount">0 تومان</span>
+                </div>
+            </section>
+
+            <!-- دکمه‌های اقدام -->
+            <div class="actions">
+                <button type="button" class="btn btn-primary" onclick="generateInvoice()">
+                    ایجاد فاکتور
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                    پاک کردن فرم
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- صفحه نمایش فاکتور -->
+    <div class="invoice-page" id="invoicePage" style="display: none;">
+        <div class="invoice-container">
+            <div class="invoice-header">
+                <div class="invoice-logo">
+                    <img src="https://digifycdn.com/media/item_images/Picsart_25-08-03_01-30-38-023.jpg?x-img=v1/optimize,q_95/resize,h_100,force_true" alt="لوگو عسل سل" class="invoice-logo-image">
+                    <div>
+                        <h1>عسل سل</h1>
+                        <p>asalsell.ir</p>
+                    </div>
+                </div>
+                <div class="invoice-info">
+                    <h2>فاکتور فروش</h2>
+                    <p>شماره: <strong id="invoiceNumber"></strong></p>
+                    <p>تاریخ: <strong id="invoiceDate"></strong></p>
+                </div>
+            </div>
+
+            <div class="invoice-customer">
+                <h3>مشخصات مشتری</h3>
+                <div class="customer-info">
+                    <p><strong>نام:</strong> <span id="invCustomerName"></span></p>
+                    <p><strong>تلفن:</strong> <span id="invCustomerPhone"></span></p>
+                    <p><strong>آدرس:</strong> <span id="invCustomerAddress"></span></p>
+                    <p id="invCityRow" style="display: none;"><strong>شهر:</strong> <span id="invCustomerCity"></span></p>
+                    <p id="invPostalRow" style="display: none;"><strong>کد پستی:</strong> <span id="invCustomerPostalCode"></span></p>
+                </div>
+            </div>
+
+            <div class="invoice-products">
+                <h3>محصولات</h3>
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>ردیف</th>
+                            <th>نام محصول</th>
+                            <th>تعداد</th>
+                            <th>قیمت واحد</th>
+                            <th>جمع</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invProductsBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="invoice-summary">
+                <table class="summary-table">
+                    <tr>
+                        <td>جمع کل:</td>
+                        <td id="invSubtotal"></td>
+                    </tr>
+                    <tr id="invDiscountRow" style="display: none;">
+                        <td>تخفیف (<span id="invDiscountPercent"></span>%):</td>
+                        <td class="discount" id="invDiscount"></td>
+                    </tr>
+                    <tr id="invShippingRow" style="display: none;">
+                        <td>هزینه ارسال:</td>
+                        <td id="invShipping"></td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>مبلغ قابل پرداخت:</strong></td>
+                        <td><strong id="invTotal"></strong></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="invoice-notes" id="invNotesSection" style="display: none;">
+                <h3>یادداشت</h3>
+                <p id="invNotes"></p>
+            </div>
+
+            <div class="invoice-footer">
+                <p>با تشکر از خرید شما - asalsell.ir</p>
+            </div>
+        </div>
+
+        <div class="invoice-actions">
+            <button type="button" class="btn btn-print" onclick="printInvoice()">
+                چاپ فاکتور
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="backToForm()">
+                بازگشت به فرم
+            </button>
+            <button type="button" class="btn btn-success" onclick="createNewInvoice()">
+                فاکتور جدید
+            </button>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
